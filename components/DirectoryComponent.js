@@ -13,12 +13,14 @@ function Directory(props) {
         /* Each list item will have:
             --> 'title': campsite's title
             --> 'subtitle': campsite's description
+            --> 'onPress' built in from "ListItem" : 
             --> 'leftAvatar' {JSX {requires an object}}: "source" as object property ; "require" as the value (from node.js) and image we want to use
         */
         return (
             <ListItem
                 title={item.name}
                 subtitle={item.description}
+                onPress={() => props.onPress(item.id)}
                 leftAvatar={{ source: require('./images/react-lake.jpg')}}
             />
         )
