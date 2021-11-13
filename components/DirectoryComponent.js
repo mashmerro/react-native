@@ -26,19 +26,18 @@ class Directory extends Component {
                 De-structure it with {} to give its properties (title, subtitle, leftAvatar) new values
         */
         const renderDirectoryItem = ({item}) => {
-            
-            return (
+            return(
                 <ListItem
                     title={item.name}
                     subtitle={item.description}
                     onPress={() => navigate('CampsiteInfo', { campsiteId: item.id })}
                     leftAvatar={{ source: require('./images/react-lake.jpg')}}
                 />
-            )
+            );
             /* Each list item will have:
                 --> 'title': campsite's title
                 --> 'subtitle': campsite's description
-                --> 'onPress' built in from "ListItem" : 
+                --> 'onPress' built in from "ListItem" 
                 --> 'leftAvatar' {JSX {requires an object}}: "source" as object property ; "require" as the value (from node.js) and image we want to use
             */
         };

@@ -34,7 +34,7 @@ class Home extends Component {
         title: 'Home'
     }
 
-    render() {
+    render() {  // Shows 3 cards in Home screen 
         return(
             <ScrollView>
                 <RenderItem item={this.state.campsites.filter(campsite => campsite.featured)[0]} />

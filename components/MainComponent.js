@@ -10,6 +10,25 @@ import Constants from 'expo-constants';
 import Directory from './DirectoryComponent';       // enables use of Directory component.js
 import CampsiteInfo from './CampsiteInfoComponent'; // enables use of Campsite info component.js
 import Home from './HomeComponent';
+import About from './AboutComponent';
+import Contact from './ContactComponent';
+
+const HomeNavigator = createStackNavigator(
+    {  // Required arg: Components available for view stack in Home
+        Home: { screen: Home }
+    },
+    {  // Optional arg: Additional configuration
+        defaultNavigationOptions: {     // header css styles
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            }
+        }
+    }
+);
 
 // 'createStackNavigator': function that has 1 required arg (Route Configs obj)
 const DirectoryNavigator = createStackNavigator (   
@@ -31,12 +50,29 @@ const DirectoryNavigator = createStackNavigator (
     }
 );
 
-const HomeNavigator = createStackNavigator(
-    {  // Required arg: Components available for view stack in Home
-        Home: { screen: Home }
+const AboutNavigator = createStackNavigator (
+    {
+        About: { screen: About }
     },
-    {  // Optional arg: Additional configuration
-        defaultNavigationOptions: {     // header css styles
+    {  
+        defaultNavigationOptions: {    
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            }
+        }
+    }
+);
+
+const ContactNavigator = createStackNavigator (
+    {
+        Contact: { screen: Contact }
+    },
+    {  
+        defaultNavigationOptions: {    
             headerStyle: {
                 backgroundColor: '#5637DD'
             },
@@ -51,7 +87,9 @@ const HomeNavigator = createStackNavigator(
 const MainNavigator = createDrawerNavigator(
     {
         Home: { screen: HomeNavigator },
-        Directory: { screen: DirectoryNavigator }
+        Directory: { screen: DirectoryNavigator },
+        About: { screen: AboutNavigator },
+        Contact: { screen: ContactNavigator }
     },
     {
         drawerBackgroundColor: '#CEC8FF'
