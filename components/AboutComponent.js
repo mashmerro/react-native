@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
-import { PARTNERS } from '../shared/partners';
+import { connect } from 'react-redux';              // connects state from redux
+import { baseUrl } from '../shared/baseUrl';        // json-server
+import Loading from './LoadingComponent';           // loading icon when getting from the server/ refreshing
+
+const mapStateToProps = state => {                  // receive state as a prop, returns partners from state
+    return {
+        partners: state.partners
+    };
+};
 
 function Mission() {
     return(
@@ -17,12 +25,6 @@ function Mission() {
 }
 
 class About extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            partners: PARTNERS
-        }
-    };
 
     static navigationOptions = {
         title: 'About Us'
@@ -31,21 +33,44 @@ class About extends Component {
     render() {
         const renderPartner = ({item}) => {
             return(
-                <ListItem
-                    title={item.name}
-                    subtitle={item.description}
-                    leftAvatar={{ source: require('./images/bootstrap-logo.png')}}
-                />
+                <ListItem title={item.name}
+                          subtitle={item.description}
+                          leftAvatar={{source: {uri: baseUrl + item.image}}}
+                />  // 'source' : use campsite images from the server
+            );
+        };
+
+        // If partners are loading, show call loading comp
+        if (this.props.partners.isLoading) {
+            return (
+                <ScrollView>
+                    <Mission />
+                    <Card title="Community Partners">
+                        <Loading />
+                    </Card>
+                </ScrollView>
+            )
+        }
+
+        // If partners have errors, show error message
+        if (this.props.partners.errMess) {
+            return (
+                <ScrollView>
+                    <Mission />
+                    <Card title="Community Partners">
+                        <Text>{this.props.partners.errMess}</Text>
+                    </Card>
+                </ScrollView>
             );
         }
+
         return(
             <ScrollView>
                 <Mission />
                 <Card title="Community Partners">
-                    <FlatList
-                        data={this.state.partners}
-                        renderItem={renderPartner}
-                        keyExtractor={item => item.id.toString()}
+                    <FlatList data={this.props.partners.partners}     // this.props.partners = entire partners data (isLoading, errMess, partners) ; .partners = prop of this.props.partners
+                              renderItem={renderPartner}
+                              keyExtractor={item => item.id.toString()}
                     />
                 </Card>
             </ScrollView>
@@ -53,4 +78,4 @@ class About extends Component {
     }
 }
 
-export default About;
+export default connect(mapStateToProps)(About);                 // connect to redux store, About component receives partners props from redux store

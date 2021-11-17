@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 // Downloaded dependencies
-import { FlatList } from 'react-native';            // FlatList = <ul>
-import { ListItem } from 'react-native-elements';   // ListItem = <li>
-import { CAMPSITES } from '../shared/campsites';
+import { View, Text, FlatList } from 'react-native';  // View = <div class='container'>   ; FlatList = <ul>
+import { Tile } from 'react-native-elements';   // ListItem / Tile = <li>
+import { connect } from 'react-redux';          // connects state from redux 
+import { baseUrl } from '../shared/baseUrl';    // json-server
+import Loading from './LoadingComponent';       // loading icon when getting from the server/ refreshing
+
+const mapStateToProps = state => {
+    return {
+        campsites: state.campsites
+    };
+};
 
 class Directory extends Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            campsites: CAMPSITES
-        };
-    }
 
     // Configure text for header title using 'static'
     static navigationOptions = {
@@ -27,20 +29,36 @@ class Directory extends Component {
         */
         const renderDirectoryItem = ({item}) => {
             return(
-                <ListItem
-                    title={item.name}
-                    subtitle={item.description}
-                    onPress={() => navigate('CampsiteInfo', { campsiteId: item.id })}
-                    leftAvatar={{ source: require('./images/react-lake.jpg')}}
+                <Tile title={item.name}
+                      caption={item.description}
+                      featured
+                      onPress={() => navigate('CampsiteInfo', { campsiteId: item.id })}
+                      imageSrc={{uri: baseUrl + item.image}}
                 />
             );
             /* Each list item will have:
                 --> 'title': campsite's title
-                --> 'subtitle': campsite's description
-                --> 'onPress' built in from "ListItem" 
+                --> 'subtitle' or 'caption' : campsite's description
+                --> 'featured' changes appearance of Tile
+                --> 'onPress' built in from "ListItem" or "Tile"
                 --> 'leftAvatar' {JSX {requires an object}}: "source" as object property ; "require" as the value (from node.js) and image we want to use
+                --> 'imageSrc' same as leftAvatar, grabbing from the server's image
             */
         };
+
+        // If campsites are loading, show call loading comp
+        if (this.props.campsites.isLoading) {
+            return <Loading />;
+        }
+
+        // If campsites have errors, show error message
+        if (this.props.campsites.errMess) {
+            return (
+                <View>
+                    <Text>{this.props.campsites.errMess}</Text>
+                </View>
+            );
+        }
 
         return (
             /* Pass FlatList props:
@@ -48,13 +66,12 @@ class Directory extends Component {
                 --> 'renderItem' (required) will always render data to a list: will hold the callback function 'renderDirectoryItem'
                 --> 'keyExtractor' will hold each property key (or id) each item from campsites array then convert from # to string
             */
-            <FlatList 
-                data={this.state.campsites}
-                renderItem={renderDirectoryItem}
-                keyExtractor={item => item.id.toString()}
+            <FlatList data={this.props.campsites.campsites}
+                      renderItem={renderDirectoryItem}
+                      keyExtractor={item => item.id.toString()}
             />
         );
     }
 }
 
-export default Directory;
+export default connect(mapStateToProps)(Directory);
