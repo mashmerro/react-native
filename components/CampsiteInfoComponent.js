@@ -22,20 +22,17 @@ function RenderCampsite(props) {   // De-structure campsite array
 
     if (campsite) { // if campsite object has something
         return (
-            <Card
-                featuredTitle={campsite.name}
-                image={{uri: baseUrl + campsite.image}}>
+            <Card featuredTitle={campsite.name}
+                  image={{uri: baseUrl + campsite.image}}>
                 <Text style={{margin:10}}>
                     {campsite.description}
                 </Text>
-                <Icon
-                    name={props.favorite ? 'heart' : 'heart-o'}      // name of the icon: if props is true (favorite), icon is solid heart, else- not solid (not favorite)
-                    type='font-awesome'     // where icon is from
-                    color='#f50'
-                    raised                  // subtle shadow effect
-                    reverse                 // reverse color scheme
-                    onPress={() => props.favorite ? 
-                        console.log('Already set as a favorite') : props.markFavorite()}    // if already a favorite, it won't do anything but console.log
+                <Icon name={props.favorite ? 'heart' : 'heart-o'}      // name of the icon: if props is true (favorite), icon is solid heart, else- not solid (not favorite)
+                      type='font-awesome'     // where icon is from
+                      color='#f50'
+                      raised                  // subtle shadow effect
+                      reverse                 // reverse color scheme
+                      onPress={() => props.favorite ? console.log('Already set as a favorite') : props.markFavorite()}    // if already a favorite, it won't do anything but console.log
                 />
             </Card>
         );
@@ -57,10 +54,9 @@ function RenderComments({comments}) {   //De-structure comments array
 
     return(
         <Card title='Comments'>
-            <FlatList
-                data={comments}                             // data always takes an array 
-                renderItem={renderCommentItem}              // calls renderCommentItem
-                keyExtractor={item => item.id.toString()}   // extracts comments id from # to a string
+            <FlatList data={comments}                             // data always takes an array 
+                      renderItem={renderCommentItem}              // calls renderCommentItem
+                      keyExtractor={item => item.id.toString()}   // extracts comments id from # to a string
             />
         </Card>
     );
@@ -83,8 +79,8 @@ class CampsiteInfo extends Component {
         return (
             <ScrollView>
                 <RenderCampsite campsite={campsite} 
-                    favorite={this.props.favorites.includes(campsiteId)}
-                    markFavorite={() => this.markFavorite(campsiteId)}
+                                favorite={this.props.favorites.includes(campsiteId)}
+                                markFavorite={() => this.markFavorite(campsiteId)}
                 />
                 <RenderComments comments={comments} />
             </ScrollView>

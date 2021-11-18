@@ -18,6 +18,7 @@ import CampsiteInfo from './CampsiteInfoComponent'; // enables use of Campsite i
 import Home from './HomeComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
+import Reservation from './ReservationComponent';
 
 const mapDispatchToProps = {    // Dispatch actions that have been thunked for asynchronous calls fetch to/ from server
     fetchCampsites,
@@ -121,6 +122,28 @@ const ContactNavigator = createStackNavigator (
     }
 );
 
+const ReservationNavigator = createStackNavigator (
+    {
+        Reservation: { screen: Reservation }
+    },
+    {  // Optional arg: Additional configuration
+        defaultNavigationOptions: ({navigation}) => ({     // header css styles 
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon name='tree'
+                              type='font-awesome'
+                              iconStyle={styles.stackIcon}
+                              onPress={() => navigation.toggleDrawer()}
+                        />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container}
@@ -142,7 +165,7 @@ const CustomDrawerContentComponent = props => (
 );
 // <SafeAreaView> for iphone x defines part of an area that nothing else will be laid out (rounded corners and camera notch)
 
-// Drawer navigator
+// Drawer navigator: must be in order
 const MainNavigator = createDrawerNavigator(
     {
         Home: { 
@@ -162,6 +185,19 @@ const MainNavigator = createDrawerNavigator(
             navigationOptions: {                    // directory icon
                 drawerIcon: ({tintColor}) => (
                     <Icon name='list'
+                          type='font-awesome'
+                          size={24}
+                          color={tintColor}
+                    />
+                )
+            }
+        },
+        Reservation: { 
+            screen: ReservationNavigator, 
+            navigationOptions: {                    // reservation icon
+                drawerLabel: 'Reserve Campsite',
+                drawerIcon: ({tintColor}) => (
+                    <Icon name='tree'
                           type='font-awesome'
                           size={24}
                           color={tintColor}
