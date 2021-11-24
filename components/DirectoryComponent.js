@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 // Downloaded dependencies
-import { View, Text, FlatList } from 'react-native';  // View = <div class='container'>   ; FlatList = <ul>
-import { Tile } from 'react-native-elements';   // ListItem / Tile = <li>
+import { View, Text, FlatList } from 'react-native';    // View = <div class='container'>   ; FlatList = <ul>
+import { Tile } from 'react-native-elements';           // ListItem / Tile = <li>
+import * as Animatable from 'react-native-animatable';  // Much easier to use this library than import { Animated } from 'react-native';
+// Redux
 import { connect } from 'react-redux';          // connects state from redux 
 import { baseUrl } from '../shared/baseUrl';    // json-server
 import Loading from './LoadingComponent';       // loading icon when getting from the server/ refreshing
@@ -29,12 +31,14 @@ class Directory extends Component {
         */
         const renderDirectoryItem = ({item}) => {
             return(
-                <Tile title={item.name}
-                      caption={item.description}
-                      featured
-                      onPress={() => navigate('CampsiteInfo', { campsiteId: item.id })}
-                      imageSrc={{uri: baseUrl + item.image}}
-                />
+                <Animatable.View animation='fadeInRightBig' duration={2000}>
+                    <Tile title={item.name}
+                        caption={item.description}
+                        featured
+                        onPress={() => navigate('CampsiteInfo', { campsiteId: item.id })}
+                        imageSrc={{uri: baseUrl + item.image}}
+                    />
+                </Animatable.View>
             );
             /* Each list item will have:
                 --> 'title': campsite's title

@@ -19,6 +19,7 @@ import Home from './HomeComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
+import Favorites from './FavoritesComponent';
 
 const mapDispatchToProps = {    // Dispatch actions that have been thunked for asynchronous calls fetch to/ from server
     fetchCampsites,
@@ -144,6 +145,28 @@ const ReservationNavigator = createStackNavigator (
     }
 );
 
+const FavoritesNavigator = createStackNavigator (
+    {
+        Favorites: { screen: Favorites }
+    },
+    {  // Optional arg: Additional configuration
+        defaultNavigationOptions: ({navigation}) => ({     // header css styles 
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon name='heart'
+                              type='font-awesome'
+                              iconStyle={styles.stackIcon}
+                              onPress={() => navigation.toggleDrawer()}
+                        />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container}
@@ -198,6 +221,19 @@ const MainNavigator = createDrawerNavigator(
                 drawerLabel: 'Reserve Campsite',
                 drawerIcon: ({tintColor}) => (
                     <Icon name='tree'
+                          type='font-awesome'
+                          size={24}
+                          color={tintColor}
+                    />
+                )
+            }
+        },
+        Favorites: { 
+            screen: FavoritesNavigator, 
+            navigationOptions: {                    // reservation icon
+                drawerLabel: 'My Favorites',
+                drawerIcon: ({tintColor}) => (
+                    <Icon name='heart'
                           type='font-awesome'
                           size={24}
                           color={tintColor}
