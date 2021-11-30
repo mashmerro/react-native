@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
-import * as Animatable from 'react-native-animatable';  // Much easier to use this library than import { Animated } from 'react-native';
+import * as Animatable from 'react-native-animatable';  // Much easier to use this library than: import { Animated } from 'react-native';
 import { connect } from 'react-redux';                  // connects state from redux
 import { baseUrl } from '../shared/baseUrl';            // json-server
 import Loading from './LoadingComponent';               // loading icon when getting from the server/ refreshing

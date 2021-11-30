@@ -20,6 +20,7 @@ import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoritesComponent';
+import Login from './LoginComponent';
 
 const mapDispatchToProps = {    // Dispatch actions that have been thunked for asynchronous calls fetch to/ from server
     fetchCampsites,
@@ -167,6 +168,28 @@ const FavoritesNavigator = createStackNavigator (
     }
 );
 
+const LoginNavigator = createStackNavigator (
+    {
+        Login: { screen: Login }
+    },
+    {  // Optional arg: Additional configuration
+        defaultNavigationOptions: ({navigation}) => ({     // header css styles 
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon name='sign-in'
+                              type='font-awesome'
+                              iconStyle={styles.stackIcon}
+                              onPress={() => navigation.toggleDrawer()}
+                        />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container}
@@ -191,6 +214,18 @@ const CustomDrawerContentComponent = props => (
 // Drawer navigator: must be in order
 const MainNavigator = createDrawerNavigator(
     {
+        Login: { 
+            screen: LoginNavigator, 
+            navigationOptions: {                    // home icon
+                drawerIcon: ({tintColor}) => (
+                    <Icon name='sign-in'
+                          type='font-awesome'
+                          size={24}
+                          color={tintColor}
+                    />
+                )
+            }
+        },
         Home: { 
             screen: HomeNavigator, 
             navigationOptions: {                    // home icon
@@ -269,6 +304,7 @@ const MainNavigator = createDrawerNavigator(
         }
     },
     {
+        initialRouteName: 'Home',       // since Login is the first Navigator, when we reload the page, the 'Home' component should be the landing page
         drawerBackgroundColor: '#CEC8FF',
         contentComponent: CustomDrawerContentComponent
     }

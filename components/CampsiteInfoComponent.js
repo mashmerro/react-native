@@ -28,13 +28,15 @@ function RenderCampsite(props) {   // De-structure campsite array
     // 'dx' : property distance of gesture across x-axis
     //        -> return true if less than -200px, false if not
 
+    const recognizeComment = ({dx}) => (dx > 200) ? true : false;
+
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,   // activate pan responder to respond to gestures
         onPanResponderGrant: () => {
             view.current.rubberBand(1000)
             .then(endState => console.log(endState.finished ? 'finished' : 'canceled'));
         },
-        onPanResponderEnd: (e, gestureState) => {   // 2args: (event )
+        onPanResponderEnd: (e, gestureState) => {   // 2 params
             console.log('pan responder end', gestureState);
             if (recognizeDrag(gestureState)) {
                 Alert.alert(        // 4 params
@@ -54,6 +56,10 @@ function RenderCampsite(props) {   // De-structure campsite array
                     { cancelable: false }   // User can't tap outside the box to close
                 );
             }
+            else if (recognizeComment(gestureState)) {
+                props.onShowModal()
+            }
+
             return true;
         }
     });

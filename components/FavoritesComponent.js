@@ -52,7 +52,7 @@ class Favorites extends Component {
                                                                              onPress: () => this.props.deleteFavorite(item.id)
                                                                          },
                                                                      ],
-                                                                     {cancelable: false }
+                                                                     { cancelable: false }
                                                                     )
                                                  } 
                         // -> <TouchableOpacity> : wrapper for touches to dim when pressing
