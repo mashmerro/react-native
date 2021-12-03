@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';        // API for calendar date/time
 import * as Animatable from 'react-native-animatable';  
+import * as Notifications from 'expo-notifications';
 
 /* Controlled form (will handle data by itself - same page) */
 class Reservation extends Component {
@@ -35,8 +36,11 @@ class Reservation extends Component {
             },
             {
                 text: 'OK',
-                onPress: () => this.resetForm()
-            },
+                onPress: () => {
+                    this.presentLocalNotification(this.state.date.toLocaleDateString('en-US'));
+                    this.resetForm();
+                }
+            }
         ]
         const options = { cancelable: false }
 
@@ -52,6 +56,30 @@ class Reservation extends Component {
             showCalendar: false
         });
     }
+    async presentLocalNotification(date) {      // 'async' : special function that always returns a promise ; 'presentLocalNotification' function name
+        function sendNotification() {
+            Notifications.setNotificationHandler({      // Show alert from API
+                handleNotification: async () => ({
+                    shouldShowAlert: true
+                })
+            });
+            Notifications.scheduleNotificationAsync({
+                content: {
+                    title: 'Your Campsite Reservation Search',
+                    body: `Search for ${date} requested`
+                },
+                trigger: null   // notification will fire immediately
+            });
+        }
+        // Check if we have permission from the device to send a notif
+        let permissions = await Notifications.getPermissionsAsync();        // 'await'  : JS ES8 keyword ONLY USED INSIDE async function (similar to 'then'), returns a promise, stops and wait for a promise to be fulfilled
+        if (!permissions.granted) {     // if permissions were NOT granted
+            permissions = await Notifications.requestPermissionsAsync();
+        }
+        if (permissions.granted) {      // if permissions were granted
+            sendNotification();         // send device notification
+        }
+    }   // call it from handleReservation 'OK' button
 
     render() {
         return (
