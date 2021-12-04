@@ -4,6 +4,7 @@ import { Input, CheckBox, Button, Icon } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';       // import everything from that module
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { baseUrl } from '../shared/baseUrl';
 
@@ -141,9 +142,21 @@ class RegisterTab extends Component {
             });
             if (!capturedImage.cancelled) {                     // check for if image picking process was not cancelled and went through
                 console.log(capturedImage);
-                this.setState({imageUrl: capturedImage.uri})    // store it in the server
+                this.processImage(capturedImage.uri)
             }
         }
+    }
+
+    processImage = async (imgUri) => {
+        const processedImage = await ImageManipulator.manipulateAsync(
+            imgUri,
+            [
+                { resize: {width: 400} }
+            ], 
+            { format: ImageManipulator.SaveFormat.PNG }
+        )
+        console.log({processedImage})
+        this.setState({imageUrl: processedImage.uri})
     }
 
     handleRegister() {
@@ -157,6 +170,20 @@ class RegisterTab extends Component {
         }
     }
 
+    getImageFromGallery = async () => {
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (cameraRollPermission.status === 'granted') {
+            const capturedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [1, 1]
+            })
+            if (!capturedImage.cancelled) {                     
+                console.log(capturedImage);
+                this.processImage(capturedImage.uri)
+            }
+        }
+    }
+
     render() {
         return(
             <ScrollView>
@@ -164,10 +191,13 @@ class RegisterTab extends Component {
                     <View style={styles.imageContainer}>
                         <Image source={{uri: this.state.imageUrl}}                      // source from server
                                loadingIndicatorSource={require('./images/logo.png')}    // loading while waiting for the image to retrieve
-                               style={styles.image}                                      // profile photo (initialized to nucamp photo then replaced when user uploads their own)
+                               style={styles.image}                                     // profile photo (initialized to nucamp photo then replaced when user uploads their own)
                         />
                         <Button title='Camera'
                                 onPress={this.getImageFromCamera}       // notice: event handler is not an arrow function/ takes args. When writing the method, bind it/ arrow function
+                        />
+                        <Button title='Gallery' 
+                                onPress={this.getImageFromGallery}
                         />
                     </View>
                     <Input placeholder='Username'                               

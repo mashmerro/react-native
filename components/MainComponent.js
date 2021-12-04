@@ -322,21 +322,33 @@ class Main extends Component {
         this.props.fetchComments();
         this.props.fetchPromotions();
         this.props.fetchPartners();
-
-        // NetInfo API only works in Android
-        // NetInfo is an alert message box to show what type of connectivity your device is using
-        NetInfo.fetch().then(connectionInfo => {       // returns a promise that resolves NetInfoState
-            (Platform.OS === 'ios')     
-                ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)                               // if ios, displays the type of connection
-                : ToastAndroid.show('Initial Network Connectivity Type: ' + connectionInfo.type, ToastAndroid.LONG);   // if not ios, displays on top of the current view and fades away after a few seconds 
-                    //  -> ToastAndroid.show = 2args: (Message, Duration of message pop up [ToastAndroid.LONG = 3.5 secs])
-        });
-        this.unsubscribeNetInfo = NetInfo.addEventListener(connectionInfo => {      // since we are inside a method, use 'this' keyword to specify we're creating it in the parent class rather than a local variable
-            this.handleConnectivityChange(connectionInfo)
-        });
+        this.showNetInfo();
     }
     componentWillUnmount() {
         this.unsubscribeNetInfo();  // stop listening for conenction changes when component unmounts
+    }
+
+    showNetInfo = async () => {
+        // NetInfo API only works in Android
+        // NetInfo is a notification message box to show what type of connectivity your device is using
+        
+        const connectionInfo = await NetInfo.fetch(); 
+        (Platform.OS === 'ios') 
+            ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type) 
+            : ToastAndroid.show('Initial Network Connectivity Type: ' + connectionInfo.type, ToastAndroid.LONG);
+
+        //  --> .then method
+        // NetInfo.fetch().then(connectionInfo => {       // returns a promise that resolves NetInfoState
+        //     (Platform.OS === 'ios')     
+        //         ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)                               // if ios, displays the type of connection
+        //         : ToastAndroid.show('Initial Network Connectivity Type: ' + connectionInfo.type, ToastAndroid.LONG);   // if not ios, displays on top of the current view and fades away after a few seconds 
+        //             //  -> ToastAndroid.show = 2args: (Message, Duration of message pop up [ToastAndroid.LONG = 3.5 secs])
+        // });
+
+        this.unsubscribeNetInfo = NetInfo.addEventListener(connectionInfo => {      // since we are inside a method, use 'this' keyword to specify we're creating it in the parent class rather than a local variable
+            this.handleConnectivityChange(connectionInfo)
+        });
+        
     }
 
     handleConnectivityChange = connectionInfo => {
