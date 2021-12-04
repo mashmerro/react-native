@@ -1,8 +1,9 @@
 
 // Downloaded components from react library
 import React, { Component } from 'react';                       // enables use of component from react
-import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-native';      // container to wrap UI elements (= <div>)
+import { View, Platform, StyleSheet, Text, ScrollView, Image, Alert, ToastAndroid } from 'react-native';      // container to wrap UI elements (= <div>)
 import { Icon } from 'react-native-elements';
+import NetInfo from '@react-native-community/netinfo';
 //  --> React Navigation
 import { createStackNavigator } from 'react-navigation-stack';  // enables use of view stack when navigating between screens
 import { createAppContainer } from 'react-navigation';          // handles top-level navigator
@@ -321,6 +322,42 @@ class Main extends Component {
         this.props.fetchComments();
         this.props.fetchPromotions();
         this.props.fetchPartners();
+
+        // NetInfo API only works in Android
+        // NetInfo is an alert message box to show what type of connectivity your device is using
+        NetInfo.fetch().then(connectionInfo => {       // returns a promise that resolves NetInfoState
+            (Platform.OS === 'ios')     
+                ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)                               // if ios, displays the type of connection
+                : ToastAndroid.show('Initial Network Connectivity Type: ' + connectionInfo.type, ToastAndroid.LONG);   // if not ios, displays on top of the current view and fades away after a few seconds 
+                    //  -> ToastAndroid.show = 2args: (Message, Duration of message pop up [ToastAndroid.LONG = 3.5 secs])
+        });
+        this.unsubscribeNetInfo = NetInfo.addEventListener(connectionInfo => {      // since we are inside a method, use 'this' keyword to specify we're creating it in the parent class rather than a local variable
+            this.handleConnectivityChange(connectionInfo)
+        });
+    }
+    componentWillUnmount() {
+        this.unsubscribeNetInfo();  // stop listening for conenction changes when component unmounts
+    }
+
+    handleConnectivityChange = connectionInfo => {
+        let connectionMsg = 'You are now connected to an active network.';
+        switch (connectionInfo.type) {
+            case 'none':
+                connectionMsg = 'No network connection is active.';
+                break;
+            case 'unknown':
+                connectionMsg = 'The network connection state is now unknown.';
+                break;
+            case 'cellular':
+                connectionMsg = 'You are now connected to a cellular network.';
+                break;
+            case 'wifi':
+                connectionMsg = 'You are now connected to a WiFi network.';
+                break;
+        }
+        (Platform.OS === 'ios')
+            ? Alert.alert('Connection change:', connectionMsg)          // if it's an ios, display an alert box message with connection type
+            : ToastAndroid.show(connectionMsg, ToastAndroid.LONG);      // if it's not ios, display a toast box message with connection type
     }
 
     render() {
