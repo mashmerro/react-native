@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder, Share } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import * as Animatable from 'react-native-animatable';  // Much easier to use this library than import { Animated } from 'react-native';
 import { connect } from 'react-redux';                  // connects state from redux
@@ -64,6 +64,18 @@ function RenderCampsite(props) {   // De-structure campsite array
         }
     });
 
+    // Button to share for socials
+    const shareCampsite = (title, message, url) => {
+        Share.share({
+            title,
+            message: `${title}: ${message} ${url}`,
+            url
+            // For android: url not required but message is  | For ios: must have either or both
+        }, {    // Extra configuration
+            dialogTitle: 'Share ' + title       // for android
+        });
+    };
+
     if (campsite) { // if campsite object has something
         return (
             <Animatable.View animation='fadeInDown' 
@@ -91,6 +103,13 @@ function RenderCampsite(props) {   // De-structure campsite array
                             raised
                             reverse
                             onPress={() => props.onShowModal()}
+                        />
+                        <Icon name={'share'}
+                            type='font-awesome'
+                            color='#5637DD'
+                            raised
+                            reverse
+                            onPress={() => shareCampsite(campsite.name, campsite.description, baseUrl + campsite.image)}
                         />
                     </View>
                 </Card>
